@@ -1,0 +1,12 @@
+{
+  "name": "lab7-web",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "lodash": "^4.18.1"
+  }
+}

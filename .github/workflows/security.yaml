@@ -1,0 +1,42 @@
+name: Security scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t lab7-web:ci .
+
+      - name: Trivy scan (fail on CRITICAL)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: lab7-web:ci
+          format: table
+          severity: CRITICAL
+          exit-code: '1'
+          ignore-unfixed: true
+
+      - name: Full report (informational)
+        if: always()
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: lab7-web:ci
+          format: table
+          severity: LOW,MEDIUM,HIGH,CRITICAL
+          output: trivy-report.txt
+          exit-code: '0'
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: trivy-report.txt
